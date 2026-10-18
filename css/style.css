@@ -1,0 +1,1364 @@
+/* ===== リセットCSS ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  /*
+    スマホでページの端を引っぱったとき（バウンス）に見える色。
+    上端はクリーム色、下端はフッターと同じブラウンにして、フッターの下が白く見えないようにする
+  */
+  background: linear-gradient(var(--color-bg) 50%, var(--color-main) 50%);
+}
+
+body {
+  font-family: 'Noto Sans JP', sans-serif;
+  color: #3D2B1F;
+  background-color: #FDFAF6;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  /* 横スクロール防止（はみ出す要素があっても画面の横幅で切る） */
+  overflow-x: hidden;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+/* ===== 変数 ===== */
+:root {
+  /* メイン・サブ：ブラウン（メニュー・フッターの背景、英字見出しなど） */
+  --color-main: #7A5C4E;
+  --color-sub: var(--color-main);
+  /* アクセント：テラコッタ（差し色。小さな面積や線だけに使う） */
+  --color-accent: #C4956A;
+  --color-text: #3D2B1F;
+  --color-bg: #FDFAF6;
+  /* 背景（サブ）：ベージュ（コンセプトの背景、茶色の上の文字） */
+  --color-bg-sub: #F5EFE6;
+  --font-heading: 'Playfair Display', serif;
+  --header-height: 64px;
+  --gutter: 20px;
+  --content-max-width: calc(1100px + var(--gutter) * 2);
+  --section-space: 96px;
+  /* FVでミルクを注ぎはじめる時刻（キャッチコピーが出そろう直前） */
+  --milk-start: 3.4s;
+  --drip-height: 48px;
+}
+
+/* ===== 共通 ===== */
+body {
+  font-size: 0.9375rem;
+  letter-spacing: 0.04em;
+}
+
+h1, h2, h3 {
+  line-height: 1.3;
+  font-weight: 500;
+}
+
+[id] {
+  scroll-margin-top: var(--header-height);
+}
+
+.container {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.section {
+  padding: var(--section-space) 0;
+}
+
+/* 大きな英字＋文字間を広げた日本語の見出し */
+.section-title {
+  text-align: center;
+  margin-bottom: 56px;
+}
+
+.section-title__en {
+  font-family: var(--font-heading);
+  font-size: 2rem;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--color-main);
+}
+
+.section-title__ja {
+  margin-top: 16px;
+  font-size: 1.375rem;
+  letter-spacing: 0.15em;
+  word-break: auto-phrase;
+  text-wrap: balance;
+}
+
+/* ===== ヘッダー ===== */
+#header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  width: 100%;
+  height: var(--header-height);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  /*
+    注いでいる間は背景を透明にして、後ろのFVでミルクが流れる様子をそのまま見せる。
+    文字はミルクが通り過ぎるときにクリーム色→濃い茶色へ。注ぎ終わったら背景を戻す
+  */
+  animation: headerMilk 3.6s linear var(--milk-start) both;
+}
+
+@keyframes headerMilk {
+  0%,
+  15% {
+    background-color: rgba(253, 250, 246, 0);
+    color: var(--color-bg);
+  }
+  35% {
+    color: var(--color-text);
+  }
+  99% {
+    background-color: rgba(253, 250, 246, 0);
+  }
+  100% {
+    background-color: var(--color-bg);
+    color: var(--color-text);
+  }
+}
+
+/* 左右の余白は var(--gutter)（PCでは40px）。下のセクションの左端とそろえるため */
+.header-inner {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 文字色は #header から受け継ぐ（ミルク演出で色が切り替わるため） */
+.logo {
+  /* タップ領域を高さ44px以上にする */
+  display: block;
+  padding: 5px 0;
+  font-family: var(--font-heading);
+  font-size: 20px;
+  letter-spacing: 0.04em;
+}
+
+.nav-list {
+  display: flex;
+  gap: 32px;
+}
+
+.nav-list a {
+  display: block;
+  padding: 4px 0;
+  font-family: var(--font-heading);
+  font-size: 14px;
+  letter-spacing: 0.032em;
+}
+
+/*
+  transition はホバー時だけ付ける。常に付けると、ミルク演出でヘッダーの文字色が
+  変わるたびに transition が走り続け、文字がクリーム色のまま止まってしまうため
+*/
+.nav-list a:hover {
+  color: var(--color-accent);
+  transition: color 0.2s;
+}
+
+.hamburger {
+  display: none;
+}
+
+/* SP：ハンバーガーメニュー。ナビはヘッダーの下に開く */
+@media (max-width: 767px) {
+  .nav-list {
+    display: none;
+    position: fixed;
+    top: var(--header-height);
+    left: 0;
+    width: 100%;
+    background: var(--color-bg);
+    flex-direction: column;
+    padding: 12px 12px;
+    gap: 0;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  }
+
+  .nav-list.is-open {
+    display: flex;
+  }
+
+  /* SP：文字は15px以上、タップ領域は高さ44px以上 */
+  .nav-list a {
+    padding: 12px 8px;
+    font-size: 15px;
+  }
+
+  /* タップ領域は44×44px。線の右端はロゴと同じ余白の位置にそろえる */
+  .hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /* 線の色はヘッダーの文字色を受け継ぐ（ミルク演出でロゴ・ナビと一緒に色が変わる） */
+    color: inherit;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    margin-right: -10px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: currentColor;
+    /*
+      × への変形だけに transition を付ける（all にすると、ミルク演出で色が変わるたびに
+      transition が走り続け、線がクリーム色のまま止まってしまうため）
+    */
+    transition: transform 0.3s, opacity 0.3s;
+  }
+
+  /* 開いているときは × にする */
+  .hamburger[aria-expanded='true'] span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .hamburger[aria-expanded='true'] span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .hamburger[aria-expanded='true'] span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+}
+
+/* ===== ファーストビュー ===== */
+/* 大きな写真と小さな写真を散らし、コピーを重ねる。動きはCSSのフェードインのみ */
+.fv {
+  position: relative;
+  /* ミルクの先端は下のセクションへはみ出して垂れるので、横方向だけ切り取る */
+  z-index: 2;
+  overflow-x: clip;
+  display: flex;
+  padding: calc(var(--header-height) + 16px) 0 max(24px, 6svh);
+  /* 最初はコーヒー色。ミルクが届いたところから、文字色が濃い茶色に変わる */
+  background-color: var(--color-main);
+  /* ミルクが各要素に届くまでの時間（SP） */
+  --milk-reach-side: 0.5s;
+  --milk-reach-lead: 1.45s;
+  --milk-reach-title: 1.8s;
+  --milk-reach-scroll: 2.4s;
+  /* 注ぎはじめにミルクを隠しておく距離（先端が大きく伸びる分も含める） */
+  --milk-edge: calc(var(--drip-height) * 3);
+}
+
+/* ミルクの層：上から下へ流れ込み、FVをクリーム色で満たす */
+.fv__milk {
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-bg);
+  animation: fvMilkPour 3.6s cubic-bezier(0.3, 0, 0.4, 1) var(--milk-start) both;
+}
+
+/*
+  流れ込むミルクの先端。水面全体を左右にたぷんと傾けながら（減衰する揺れ）、
+  波を左右にゆっくり流し、しずくを伸び縮みさせる。
+  注ぎ終わると波は引いて、先端はコンセプトとの境目のしずくとぴったり同じ形になる
+*/
+.fv__milk-edge {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  height: var(--drip-height);
+  fill: var(--color-bg);
+  transform-origin: 50% 0;
+  animation: fvMilkSlosh 3.6s ease-in-out var(--milk-start) both;
+}
+
+/* 傾いたときに本体との間にすき間が出ないよう、上側にも同じ色を重ねておく */
+.fv__milk-edge::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  left: 0;
+  width: 100%;
+  height: 140px;
+  background-color: var(--color-bg);
+}
+
+.fv__milk-edge svg {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  display: block;
+}
+
+.fv__milk-wave--1 {
+  width: 200%;
+  height: 85%;
+  transform-origin: 0 0;
+  animation: fvWaveLeft 3.6s ease-in-out var(--milk-start) both;
+}
+
+/* 波長と高さを変えて、逆向きに流す */
+.fv__milk-wave--2 {
+  width: 300%;
+  height: 65%;
+  transform-origin: 0 0;
+  animation: fvWaveRight 3.6s ease-in-out var(--milk-start) both;
+}
+
+.fv__milk-drip {
+  width: 100%;
+  height: 100%;
+  transform-origin: top;
+  animation: fvDripWobble 3.6s ease-in-out var(--milk-start) both;
+}
+
+.fv__inner {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  width: 100%;
+  padding: 0 var(--gutter);
+}
+
+/* 左端の縦書き英字：1文字ずつ現れる */
+.fv__side {
+  display: none;
+}
+
+/* 写真 */
+/*
+  フェードインの演出は backwards（始まる前だけ最初の状態にする）。
+  終わったあとに transform・filter を残さず、元の状態に戻すため（残るとスマホで少しぼやける）
+*/
+.fv__photo {
+  position: relative;
+  animation: fvPhotoIn 1.6s ease-out backwards;
+}
+
+.fv__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+.fv__photo--main {
+  grid-column: 2 / 7;
+  grid-row: 1;
+}
+
+.fv__photo--main img {
+  aspect-ratio: 1 / 1;
+  max-height: 36vh;
+  max-height: 36svh;
+}
+
+/* SP：小さな写真は、大きな写真の左上と、コピーの右に置く */
+.fv__photo--s1 {
+  grid-column: 1 / 3;
+  grid-row: 1;
+  align-self: start;
+  z-index: 1;
+  margin-top: 32px;
+  animation-delay: 0.5s;
+}
+
+.fv__photo--s1 img,
+.fv__photo--s2 img,
+.fv__photo--s3 img {
+  aspect-ratio: 1 / 1;
+}
+
+.fv__photo--s2 {
+  display: none;
+}
+
+.fv__photo--s3 {
+  grid-column: 5 / 7;
+  grid-row: 2;
+  align-self: start;
+  margin-top: max(24px, 6svh);
+  animation-delay: 0.9s;
+}
+
+/* コピー */
+.fv__copy {
+  grid-column: 1 / 7;
+  grid-row: 2;
+  margin-top: max(24px, 6svh);
+}
+
+.fv__lead {
+  /* SP：右に置いた写真の左までで折り返す（狭い画面で写真の下にもぐらないように） */
+  max-width: calc(100% / 3 * 2 - 8px);
+  letter-spacing: 0.15em;
+  animation: fvMilkText 0.4s ease-out calc(var(--milk-start) + var(--milk-reach-lead)) both;
+}
+
+.fv__lead-line {
+  display: block;
+  animation: fadeIn 1.2s ease-out backwards;
+  animation-delay: calc(0.8s + var(--i) * 0.25s);
+}
+
+.fv__title {
+  animation: fvMilkText 0.4s ease-out calc(var(--milk-start) + var(--milk-reach-title)) both;
+  margin-top: 28px;
+  font-size: 2.25rem;
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: 0.3em;
+}
+
+.fv__title-line {
+  display: flex;
+  align-items: center;
+}
+
+.fv__char {
+  display: inline-block;
+  animation: fvCharIn 0.9s ease-out backwards;
+  animation-delay: calc(1.6s + var(--i) * 0.14s);
+}
+
+/* 文字の間に入る小さな写真 */
+.fv__tile {
+  width: 1.1em;
+  margin-left: 0.1em;
+}
+
+/* 2行目の頭の写真は、後ろの文字との間をあける */
+.fv__title-line--2 .fv__tile {
+  margin-left: 0;
+  margin-right: 0.4em;
+}
+
+.fv__tile img {
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+/* 右下のスクロール表示 */
+.fv__scroll {
+  display: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fvMilkPour {
+  from {
+    transform: translateY(calc(-100% - var(--milk-edge)));
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* 波は大きくうねりながら流れ、最後は引いて消える */
+@keyframes fvWaveLeft {
+  0% {
+    transform: translateX(0) scaleY(2.6);
+  }
+  75% {
+    transform: translateX(-38%) scaleY(1.8);
+  }
+  100% {
+    transform: translateX(-50%) scaleY(0);
+  }
+}
+
+@keyframes fvWaveRight {
+  0% {
+    transform: translateX(-50%) scaleY(2.6);
+  }
+  75% {
+    transform: translateX(-12%) scaleY(1.8);
+  }
+  100% {
+    transform: translateX(0) scaleY(0);
+  }
+}
+
+/* 右へ、左へと傾き、だんだん揺れが小さくなって落ち着く */
+@keyframes fvMilkSlosh {
+  0% {
+    transform: skewY(0deg);
+  }
+  14% {
+    transform: skewY(6deg);
+  }
+  32% {
+    transform: skewY(-5deg);
+  }
+  50% {
+    transform: skewY(3.5deg);
+  }
+  68% {
+    transform: skewY(-2deg);
+  }
+  84% {
+    transform: skewY(0.8deg);
+  }
+  100% {
+    transform: skewY(0deg);
+  }
+}
+
+/* しずくが伸びたり縮んだりしながら落ちていく */
+@keyframes fvDripWobble {
+  0% {
+    transform: scaleY(2);
+  }
+  25% {
+    transform: scaleY(3);
+  }
+  50% {
+    transform: scaleY(2.2);
+  }
+  75% {
+    transform: scaleY(1.6);
+  }
+  100% {
+    transform: scaleY(1);
+  }
+}
+
+/*
+  スクロール表示：線が下へ縮んでから、もとの長さに戻る。
+  文字は線の上端について一緒に下がり、線の下端はその場にとどめる
+  （文字ごと下げた分だけ、線を上へ戻している）
+*/
+@keyframes fvScrollText {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  45% {
+    translate: 0 48px;
+  }
+}
+
+@keyframes fvScrollPulse {
+  0%,
+  100% {
+    transform: translateY(0) scaleY(1);
+  }
+  45% {
+    transform: translateY(-48px) scaleY(0.15);
+  }
+}
+
+/* ミルクが届いた要素から、文字色をクリーム色→濃い茶色に変える */
+@keyframes fvMilkText {
+  from {
+    color: var(--color-bg);
+  }
+  to {
+    color: var(--color-text);
+  }
+}
+
+@keyframes fvPhotoIn {
+  from {
+    opacity: 0;
+    transform: scale(1.04);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/*
+  1文字ずつ、ぼかしがとれながら浮かび上がる。
+  終わりは filter・transform を none にする（blur(0) などが残ると、スマホで文字や写真が
+  別の画像として描かれ、少しぼやけて見えるため）
+*/
+@keyframes fvCharIn {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(0.3em);
+  }
+  to {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+}
+
+/* ===== コンセプト ===== */
+/* 背景を少しだけ濃くして、FVとの切り替えにしずくを見せる */
+.concept {
+  background-color: var(--color-bg-sub);
+}
+
+/*
+  FVの下のしずくも最初はコーヒー色。
+  FVのミルクが垂れてきてこの形に重なるのに合わせて、クリーム色に変える
+*/
+.concept > .drip {
+  animation: dripMilk 0.6s ease-in calc(var(--milk-start) + 3s) both;
+}
+
+/* 丸は、ミルクのしずくが垂れきったあと、上から順にクリーム色に変わる */
+.concept > .drip .drip__drop {
+  animation: dropMilk 0.3s ease-out calc(var(--milk-start) + 3.6s) both;
+}
+
+.concept > .drip .drip__drop:nth-of-type(2) {
+  animation-delay: calc(var(--milk-start) + 3.8s);
+}
+
+.concept > .drip .drip__drop:nth-of-type(3) {
+  animation-delay: calc(var(--milk-start) + 4s);
+}
+
+@keyframes dropMilk {
+  from {
+    background-color: var(--color-main);
+  }
+  to {
+    background-color: var(--color-bg);
+  }
+}
+
+@keyframes dripMilk {
+  from {
+    color: var(--color-main);
+  }
+  to {
+    color: var(--color-bg);
+  }
+}
+
+/* SP：写真を左右交互に寄せ、間に文章を挟む */
+.concept-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.concept-flow__photo {
+  object-fit: cover;
+}
+
+.concept-flow__photo--1 {
+  width: 78%;
+  aspect-ratio: 4 / 3;
+}
+
+.concept-flow__photo--2 {
+  width: 60%;
+  margin-left: auto;
+  aspect-ratio: 3 / 4;
+}
+
+.concept-flow__photo--3 {
+  width: 72%;
+  margin-left: 6%;
+  aspect-ratio: 3 / 2;
+}
+
+.concept-flow__photo--4 {
+  width: 54%;
+  margin-left: auto;
+  margin-right: 6%;
+  aspect-ratio: 1 / 1;
+}
+
+.concept-flow__text {
+  margin-bottom: 32px;
+}
+
+.concept-flow__text br {
+  display: none;
+}
+
+.concept-flow__title {
+  margin-bottom: 12px;
+  font-size: 1.125rem;
+  letter-spacing: 0.12em;
+}
+
+/* ===== セクションの切り替え（しずく） ===== */
+/* 上のセクションの色が、ミルクがコーヒーに溶けるように下へ垂れる */
+.concept,
+.menu,
+.access,
+#footer {
+  position: relative;
+}
+
+.drip {
+  position: absolute;
+  /* 上のセクションと1pxだけ重ねて、境目に細い線（すき間）が出ないようにする */
+  top: -1px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.drip--bg {
+  color: var(--color-bg);
+}
+
+.drip--sub {
+  color: var(--color-bg-sub);
+}
+
+.drip--accent {
+  color: var(--color-main);
+}
+
+.drip__wave {
+  display: block;
+  width: 100%;
+  height: var(--drip-height);
+  fill: currentColor;
+}
+
+/* 中央に縦に3つ、だんだん小さくなる丸 */
+.drip__drop {
+  width: 12px;
+  aspect-ratio: 1 / 1;
+  margin-top: 10px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+.drip__drop:nth-of-type(2) {
+  width: 8px;
+}
+
+.drip__drop:nth-of-type(3) {
+  width: 5px;
+}
+
+/* しずくの分だけ、下のセクションの上の余白を広げる */
+.concept,
+.menu,
+.access {
+  padding-top: calc(var(--section-space) + var(--drip-height));
+}
+
+/* ===== メニュー ===== */
+/* フッターと同じ茶色の背景に、クリーム色の文字 */
+.menu {
+  background-color: var(--color-main);
+  color: var(--color-bg-sub);
+}
+
+.menu .section-title__en {
+  color: var(--color-bg-sub);
+}
+
+.menu-category + .menu-category {
+  margin-top: 96px;
+}
+
+.menu-category__title {
+  margin-bottom: 40px;
+  text-align: center;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+
+.menu-category__title small {
+  display: block;
+  margin-top: 6px;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+}
+
+/* メニュー一覧：SPは1カラム */
+.menu-grid {
+  display: grid;
+  gap: 48px;
+}
+
+.menu-card__photo {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.menu-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  margin-top: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--color-accent);
+}
+
+.menu-card__name {
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+.menu-card__price {
+  flex-shrink: 0;
+  font-family: var(--font-heading);
+}
+
+/* 茶色の背景で文字のコントラストが足りなくなるため、透明度は下げない */
+.menu-card__desc {
+  margin-top: 10px;
+}
+
+/* モーニング：横いっぱいの写真2枚の下端に、枠を重ねる */
+.menu-morning {
+  margin-top: 96px;
+}
+
+.menu-morning__photos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.menu-morning__photos img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+
+.menu-morning__box {
+  position: relative;
+  width: calc(100% - var(--gutter) * 2);
+  max-width: 760px;
+  margin: -48px auto 0;
+  padding: 72px 24px 40px;
+  border: 3px solid var(--color-bg-sub);
+  text-align: center;
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+/* ホバーすると、枠の中がふわっと白くなり、文字がブラウンに変わる */
+.menu-morning__box:hover {
+  background-color: var(--color-bg);
+  color: var(--color-main);
+}
+
+.menu-morning__title {
+  font-size: 0.9375rem;
+  letter-spacing: 0.1em;
+}
+
+.menu-morning__title span {
+  display: block;
+  margin-bottom: 4px;
+  font-family: var(--font-heading);
+  font-size: 2.25rem;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+}
+
+.menu-morning__text {
+  margin-top: 16px;
+}
+
+/* ===== アクセス ===== */
+.access__inner {
+  display: grid;
+  gap: 48px;
+}
+
+.access__row {
+  display: grid;
+  grid-template-columns: 6em 1fr;
+  gap: 16px;
+  padding: 16px 0;
+  border-top: 1px solid var(--color-accent);
+}
+
+.access__row:last-child {
+  border-bottom: 1px solid var(--color-accent);
+}
+
+/* 「徒歩5分」などが途中で折り返さないよう、文節で改行する */
+.access__row dd {
+  word-break: auto-phrase;
+}
+
+.access__row dt {
+  color: var(--color-main);
+}
+
+.access__row a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.access__map iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border: 0;
+}
+
+.access__route {
+  margin-top: 16px;
+}
+
+/* ===== フッター ===== */
+/* 上にしずく（波と3つの丸）の分の余白をとり、その下に高さ80pxの帯を置く */
+#footer {
+  padding-top: calc(var(--drip-height) + 64px);
+  /* SP：一番下までスクロールしたとき、↑ボタンがコピーライトに重ならないよう下に余白 */
+  padding-bottom: 64px;
+  background: var(--color-main);
+}
+
+.footer-inner {
+  max-width: var(--content-max-width);
+  height: 80px;
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* アイコンは20pxのまま、周りの余白でタップ領域を44×44pxにする */
+.footer-sns {
+  display: flex;
+  gap: 4px;
+  margin-left: -12px;
+}
+
+.footer-sns a {
+  display: block;
+  padding: 12px;
+  color: var(--color-bg-sub);
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.footer-sns a:hover {
+  opacity: 1;
+}
+
+.footer-sns svg {
+  display: block;
+}
+
+.footer-copy {
+  font-size: 0.8rem;
+  color: var(--color-bg-sub);
+}
+
+/*
+  ページ上部へのスクロールボタン（角丸なし）。
+  細い山形の矢印と小さな英字「Top」を縦に並べ、Scroll表示と同じ細い線のトーンに揃える。
+  隠れている間は押せないようにする
+*/
+.scroll-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 52px;
+  height: 52px;
+  /* 枠線はクリーム色にして、茶色のフッターに重なっても形がわかるようにする */
+  border: 1px solid var(--color-bg);
+  background: var(--color-main);
+  color: var(--color-bg);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s, background-color 0.3s, color 0.3s;
+}
+
+.scroll-top__icon {
+  display: block;
+  transition: transform 0.3s;
+}
+
+.scroll-top__label {
+  font-family: var(--font-heading);
+  font-size: 0.6875rem;
+  line-height: 1;
+  letter-spacing: 0.12em;
+}
+
+.scroll-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ホバーで色が反転し（白地に茶色）、矢印が少し上へ */
+.scroll-top:hover {
+  border-color: var(--color-main);
+  background: var(--color-bg);
+  color: var(--color-main);
+}
+
+.scroll-top:hover .scroll-top__icon {
+  transform: translateY(-3px);
+}
+
+/* ===== PC（768px以上） ===== */
+@media (min-width: 768px) {
+  :root {
+    --gutter: 40px;
+    --section-space: 160px;
+    --drip-height: 96px;
+  }
+
+  body {
+    font-size: 1rem;
+  }
+
+  .section-title {
+    margin-bottom: 80px;
+  }
+
+  .section-title__en {
+    font-size: 2.75rem;
+  }
+
+  .section-title__ja {
+    font-size: 1.75rem;
+  }
+
+  /* FV：左にコピー、右に大きな写真、まわりに小さな写真を散らす */
+  .fv {
+    padding: var(--header-height) 0 0;
+    /* ミルクが各要素に届くまでの時間（PC） */
+    --milk-reach-lead: 0.9s;
+    --milk-reach-title: 1.3s;
+  }
+
+  .fv__inner {
+    display: block;
+    height: calc(100vh - var(--header-height));
+    height: calc(100svh - var(--header-height));
+    min-height: 640px;
+    max-height: 960px;
+    padding: 0;
+  }
+
+  .fv__side {
+    display: block;
+    position: absolute;
+    top: 32px;
+    left: 20px;
+    writing-mode: vertical-rl;
+    font-family: var(--font-heading);
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    opacity: 0.75;
+    animation: fvMilkText 0.4s ease-out calc(var(--milk-start) + var(--milk-reach-side)) both;
+  }
+
+  .fv__side-char {
+    animation: fadeIn 0.6s ease-out backwards;
+    animation-delay: calc(0.6s + var(--i) * 0.04s);
+  }
+
+  .fv__photo {
+    position: absolute;
+  }
+
+  .fv__photo--main {
+    top: 7%;
+    right: 7%;
+    width: 38%;
+  }
+
+  .fv__photo--main img {
+    aspect-ratio: 1 / 1.03;
+    max-height: 74vh;
+  }
+
+  .fv__photo--s1 {
+    top: 0;
+    left: 29%;
+    width: 10.5%;
+    margin: 0;
+  }
+
+  .fv__photo--s2 {
+    display: block;
+    bottom: 9%;
+    left: 4%;
+    width: 11.5%;
+    animation-delay: 0.7s;
+  }
+
+  .fv__photo--s3 {
+    bottom: 0;
+    left: 35%;
+    width: 16%;
+    margin: 0;
+  }
+
+  .fv__copy {
+    position: absolute;
+    top: 24%;
+    left: 11%;
+    margin: 0;
+  }
+
+  .fv__lead {
+    max-width: none;
+  }
+
+
+  .fv__title {
+    margin-top: 40px;
+    font-size: clamp(2.5rem, 3.6vw, 3.25rem);
+  }
+
+  .fv__scroll {
+    display: block;
+    position: absolute;
+    right: 20px;
+    bottom: 0;
+    padding-bottom: 72px;
+    writing-mode: vertical-rl;
+    font-family: var(--font-heading);
+    font-size: 0.8125rem;
+    letter-spacing: 0.17em;
+    opacity: 0.75;
+    animation:
+      fadeIn 1s ease-out 3.2s both,
+      fvMilkText 0.4s ease-out calc(var(--milk-start) + var(--milk-reach-scroll)) both,
+      fvScrollText 1.4s ease-in-out calc(var(--milk-start) + 3.9s) both;
+  }
+
+  /* 下へ垂れる細い線 */
+  .fv__scroll::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    height: 56px;
+    background-color: currentColor;
+    /* ミルクが下りきったあと、線が一度下へ縮んで、また伸びる（文字は線の上端について動く） */
+    transform-origin: bottom;
+    animation: fvScrollPulse 1.4s ease-in-out calc(var(--milk-start) + 3.9s) both;
+  }
+
+  /*
+    コンセプト：左右の列に写真を交互に置き、中央の列の短い文章でジグザグに下へ。
+    中央の文章の列は最大386px、左右の写真の列は残りを等分
+  */
+  .concept-flow {
+    display: grid;
+    grid-template-columns: 1fr minmax(0, 386px) 1fr;
+    column-gap: 24px;
+    row-gap: 0;
+    /* 写真を左右の端まで広げるため、コンテナより一回り広くとる */
+    margin-inline: calc((100% - min(100vw - 64px, 1320px)) / 2);
+  }
+
+  .concept-flow__photo,
+  .concept-flow__text {
+    width: 100%;
+    margin: 0;
+  }
+
+  .concept-flow__text {
+    grid-column: 2;
+    align-self: center;
+    text-align: center;
+  }
+
+  .concept-flow__photo--1 {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .concept-flow__text--1 {
+    grid-row: 1;
+    margin-top: 160px;
+  }
+
+  .concept-flow__photo--2 {
+    grid-column: 3;
+    grid-row: 2;
+    justify-self: end;
+    width: 96%;
+    margin-top: -80px;
+  }
+
+  .concept-flow__text--2 {
+    grid-row: 2;
+    margin-top: 120px;
+  }
+
+  .concept-flow__photo--3 {
+    grid-column: 1;
+    grid-row: 3;
+    margin-top: -40px;
+  }
+
+  .concept-flow__text--3 {
+    grid-row: 3;
+    margin-top: 120px;
+  }
+
+  .concept-flow__photo--4 {
+    grid-column: 3;
+    grid-row: 4;
+    justify-self: end;
+    width: 78%;
+    margin-top: -24px;
+  }
+
+  .concept-flow__text--4 {
+    grid-row: 4;
+    margin-top: 160px;
+  }
+
+  /* しずくの丸も、PCでは一回り大きく */
+  .drip__drop {
+    width: 16px;
+    margin-top: 14px;
+  }
+
+  .drip__drop:nth-of-type(2) {
+    width: 11px;
+  }
+
+  .drip__drop:nth-of-type(3) {
+    width: 7px;
+  }
+
+  /* メニュー：PCは2カラム */
+  .menu-category + .menu-category {
+    margin-top: 160px;
+  }
+
+  .menu-category__title {
+    margin-bottom: 56px;
+    font-size: 2rem;
+  }
+
+  .menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 72px 56px;
+  }
+
+  .menu-morning {
+    margin-top: 160px;
+  }
+
+  .menu-morning__photos img {
+    aspect-ratio: 3 / 2;
+  }
+
+  /* 写真に上側を重ね、見出しと文章を横に並べる */
+  .menu-morning__box {
+    display: flex;
+    align-items: center;
+    gap: 48px;
+    margin-top: -96px;
+    padding: 136px 64px 64px;
+    text-align: left;
+  }
+
+  .menu-morning__title {
+    flex-shrink: 0;
+  }
+
+  .menu-morning__title span {
+    font-size: 3rem;
+  }
+
+  .menu-morning__text {
+    margin-top: 0;
+  }
+
+  /* アクセス */
+  .access__inner {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    gap: 80px;
+  }
+
+  /* PC：しずくの丸と帯の間、帯の下に、同じくらいの余白をとる */
+  #footer {
+    padding-top: calc(var(--drip-height) + 96px);
+    padding-bottom: 24px;
+  }
+
+  .scroll-top {
+    bottom: 32px;
+    right: 32px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  #header,
+  .concept > .drip,
+  .concept > .drip * {
+    animation: none !important;
+  }
+
+  .fv,
+  .fv *,
+  .fv *::after {
+    animation: none !important;
+  }
+}
