@@ -56,7 +56,7 @@ ul, ol {
   --content-max-width: calc(1100px + var(--gutter) * 2);
   --section-space: 96px;
   /* FVでミルクを注ぎはじめる時刻（キャッチコピーが出そろう直前） */
-  --milk-start: 3.4s;
+  --milk-start: 3.1s;
   --drip-height: 48px;
 }
 
@@ -446,27 +446,15 @@ h1, h2, h3 {
   align-items: center;
 }
 
+/* 2行目は少し右へずらす（写真があったときと同じ位置） */
+.fv__title-line--2 {
+  padding-left: 1.5em;
+}
+
 .fv__char {
   display: inline-block;
   animation: fvCharIn 0.9s ease-out backwards;
   animation-delay: calc(1.6s + var(--i) * 0.14s);
-}
-
-/* 文字の間に入る小さな写真 */
-.fv__tile {
-  width: 1.1em;
-  margin-left: 0.1em;
-}
-
-/* 2行目の頭の写真は、後ろの文字との間をあける */
-.fv__title-line--2 .fv__tile {
-  margin-left: 0;
-  margin-right: 0.4em;
-}
-
-.fv__tile img {
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
 }
 
 /* 右下のスクロール表示 */
